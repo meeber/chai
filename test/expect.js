@@ -2992,6 +2992,28 @@ describe('expect', function () {
     var badFnObj = function () { throw {a: 1}; };
     var badFnStr = function () { throw "Illegal salmon!"; };
 
+    describe("used as a property-based assertion", function () {
+      describe("normal", function () {
+        it("passes when target throws", function () {
+          expect(badFnErr).to.throw;
+        });
+        it("fails when target doesn't throw", function () {
+          err(function () {
+            expect(goodFn, 'blah').to.throw;
+          }, /^blah: expected \[Function(: goodFn)*\] to throw$/);
+        });
+      });
+      describe("negated", function () {
+        it("passes when target doesn't throw", function () {
+          expect(goodFn).to.not.throw;
+        });
+        it("fails when target throws", function () {
+          err(function () {
+            expect(badFnErr, 'blah').to.not.throw;
+          }, /^blah: expected \[Function(: badFnErr)*\] to not throw but \[Error: Illegal salmon!\] was thrown$/);
+        });
+      });
+    });
     describe("invoked with no args", function () {
       describe("normal", function () {
         it("passes when target throws", function () {
@@ -3204,12 +3226,12 @@ describe('expect', function () {
       describe("negated", function () {
         it("fails when errLike is defined", function () {
           err(function () {
-            expect(badFnErr).to.not.throw(TypeError);
+            expect(goodFn).to.not.throw(TypeError);
           }, /^errLike and errMsgMatcher must both be undefined when negate is true$/, true);
         });
         it("fails when errMsgMatcher is defined", function () {
           err(function () {
-            expect(badFnErr).to.not.throw(undefined, 'salmon');
+            expect(goodFn).to.not.throw(undefined, 'salmon');
           }, /^errLike and errMsgMatcher must both be undefined when negate is true$/, true);
         });
       });
